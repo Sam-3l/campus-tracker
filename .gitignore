@@ -1,0 +1,11 @@
+.env
+
+# Ignore Python bytecode files
+*.pyc
+pycache/
+__pycache__/
+
+# Ignore virtual environment directories
+venv/
+.vscode/
+.idea/
