@@ -22,7 +22,7 @@ This project is a real-time location tracking system for people and assets acros
 1. Clone the repo:
 
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/Sam-3l/campus-tracker.git
    cd campus-tracker
    ```
 2. Create and activate a virtual environment:
