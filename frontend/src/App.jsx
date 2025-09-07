@@ -1,18 +1,34 @@
 import React from "react";
+import Layout from "./components/Layout";
 import MapView from "./components/MapView";
 import DeviceList from "./components/DeviceList";
-import "bootstrap/dist/css/bootstrap.min.css";
 
-function App() {
+export default function App() {
   return (
-    <div className="container">
-      <h1 className="my-3">Campus Tracker Dashboard</h1>
-      <div className="row">
-        <div className="col-md-4"><DeviceList /></div>
-        <div className="col-md-8"><MapView /></div>
+    <Layout>
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="bg-white shadow rounded-xl p-4 text-center">
+          <h2 className="text-2xl font-bold">12</h2>
+          <p className="text-gray-500">Devices Online</p>
+        </div>
+        <div className="bg-white shadow rounded-xl p-4 text-center">
+          <h2 className="text-2xl font-bold">3</h2>
+          <p className="text-gray-500">Offline</p>
+        </div>
+        <div className="bg-white shadow rounded-xl p-4 text-center">
+          <h2 className="text-2xl font-bold">45</h2>
+          <p className="text-gray-500">Total Devices</p>
+        </div>
       </div>
-    </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 bg-white shadow rounded-xl p-4">
+          <MapView />
+        </div>
+        <div className="bg-white shadow rounded-xl p-4">
+          <DeviceList />
+        </div>
+      </div>
+    </Layout>
   );
 }
-
-export default App;
