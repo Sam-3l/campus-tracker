@@ -9,3 +9,6 @@ __pycache__/
 venv/
 .vscode/
 .idea/
+
+# Ignore the local SQLite database file
+instance/tracker.db

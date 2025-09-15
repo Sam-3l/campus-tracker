@@ -1,28 +1,23 @@
 from flask import Blueprint, request, jsonify
-from ..models import Device, Location
-from ..extensions import db
+from flask_socketio import emit
+from ..models import Location
+from ..extensions import db, socketio
 
 lora_bp = Blueprint("lora", __name__)
 
 @lora_bp.route("/data", methods=["POST"])
 def receive_data():
     payload = request.get_json()
-    dev_eui = payload.get("end_device_ids", {}).get("dev_eui")
-    uplink = payload.get("uplink_message", {})
-    decoded = uplink.get("decoded_payload", {})
-    lat, lng = decoded.get("lat"), decoded.get("lng")
+    lat, lng = payload.get("Lat"), payload.get("Lng")
 
-    if not dev_eui or lat is None or lng is None:
+    if lat is None or lng is None:
         return jsonify({"error": "Invalid payload"}), 400
 
-    device = Device.query.filter_by(dev_eui=dev_eui).first()
-    if not device:
-        device = Device(dev_eui=dev_eui, name=f"Device {dev_eui}")
-        db.session.add(device)
-        db.session.commit()
-
-    location = Location(device_id=device.id, lat=lat, lng=lng)
+    location = Location(lat=lat, lng=lng)
     db.session.add(location)
     db.session.commit()
+
+    # Emit real-time location update
+    socketio.emit("location_update", {"lat": lat, "lng": lng, "timestamp": location.timestamp.isoformat()}, broadcast=True)
 
     return jsonify({"status": "ok"}), 200
