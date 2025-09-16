@@ -1,9 +1,31 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from functools import wraps
+import jwt
+from ..config import Config
 from ..models import Location
 
 device_bp = Blueprint("device", __name__)
 
+# Authentication decorator
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if not token:
+            return jsonify({"message": "Token is missing!"}), 403
+
+        try:
+            token = token.split(" ")[1]  # Remove 'Bearer' prefix
+            jwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
+        except Exception as e:
+            return jsonify({"message": "Token is invalid!"}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated
+
 @device_bp.route("/locations", methods=["GET"])
+@token_required
 def get_all_locations():
     """
     Get all stored locations
@@ -39,6 +61,7 @@ def get_all_locations():
     ])
 
 @device_bp.route("/latest_location", methods=["GET"])
+@token_required
 def get_latest_location():
     """
     Get the latest location
