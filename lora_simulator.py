@@ -4,11 +4,15 @@ import time
 
 URL = "http://localhost:5000/api/lora/data"
 
+# Campus center: WHITEHouse, OAU
+CAMPUS_CENTER_LAT, CAMPUS_CENTER_LNG = 7.519467, 4.520684
+# Approximate offset to stay within campus (~0.003 degrees ~ 300m)
+OFFSET = 0.003
+
 def generate_random_location():
-    """Generate random GPS-like coordinates near a fixed point (example: Lagos)"""
-    base_lat, base_lng = 6.5244, 3.3792  # Lagos, Nigeria
-    lat = base_lat + random.uniform(-0.01, 0.01)
-    lng = base_lng + random.uniform(-0.01, 0.01)
+    """Generate random coordinates near the OAU campus center."""
+    lat = CAMPUS_CENTER_LAT + random.uniform(-OFFSET, OFFSET)
+    lng = CAMPUS_CENTER_LNG + random.uniform(-OFFSET, OFFSET)
     return {"Lat": round(lat, 6), "Lng": round(lng, 6)}
 
 def simulate_device():
@@ -23,8 +27,8 @@ def simulate_device():
         except requests.exceptions.RequestException as e:
             print(f"❌ Error: {e}")
 
-        time.sleep(5)  # wait 5 seconds before sending next update
+        time.sleep(5)  # 5 seconds between updates
 
 if __name__ == "__main__":
-    print("📡 Starting LoRa device simulation...")
+    print("📡 Starting LoRa device simulation for OAU campus...")
     simulate_device()
