@@ -3,6 +3,7 @@ from .config import Config
 from .extensions import db, socketio
 from flask_migrate import Migrate
 from flasgger import Swagger
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +13,7 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
     socketio.init_app(app)
+    CORS(app)
 
     swagger_config = {
         "headers": [],

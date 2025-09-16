@@ -1,3 +1,6 @@
+/* App.css - global layout helpers only */
+
+/* Root container for app max-width */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,214 +8,32 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-/* General Styles */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-}
-
-/* Login Page */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #e9ecef;
-}
-
-.login-form {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 300px;
-}
-
-.login-form h2 {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.login-form .form-group {
-  margin-bottom: 15px;
-}
-
-.login-form .form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.login-form .form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-form .btn-submit {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-form .btn-submit:hover {
-  background-color: #0056b3;
-}
-
-/* Layout */
+/* Layout helpers */
 .layout-container {
   display: flex;
   height: 100vh;
 }
 
-.sidebar {
-  width: 250px;
-  background: #343a40;
-  color: #fff;
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: start;
+  margin-top: 1rem;
+}
+
+/* Responsive grid for smaller screens */
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Top stats row helper (optional for dashboard) */
+.stats-grid {
   display: flex;
-  flex-direction: column;
-}
-
-.sidebar-header {
-  padding: 20px;
-  font-size: 1.5em;
-  text-align: center;
-  background: #495057;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 10px;
-}
-
-.sidebar-nav a {
-  display: block;
-  color: #fff;
-  text-decoration: none;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 5px;
-}
-
-.sidebar-nav a:hover {
-  background: #495057;
-}
-
-.sidebar-footer {
-  padding: 10px;
-  text-align: center;
-}
-
-.sidebar-footer .btn-logout {
-  background: #dc3545;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.sidebar-footer .btn-logout:hover {
-  background: #c82333;
-}
-
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.topbar {
-  background: #fff;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.topbar-actions input {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.topbar-actions img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-left: 10px;
-}
-
-/* Device List */
-.device-list-container {
-  padding: 20px;
-}
-
-.device-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.device-table th, .device-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.device-table th {
-  background: #007bff;
-  color: #fff;
-}
-
-/* Map View */
-.map-container {
-  height: 60vh;
-  margin: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
+  gap: 18px;
+  margin: 1rem 0 1.25rem;
+  flex-wrap: wrap;
+  align-items: stretch;
 }

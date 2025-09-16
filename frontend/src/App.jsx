@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./components/Layout";
 import MapView from "./components/MapView";
-import DeviceList from "./components/DeviceList";
+import DeviceCard from "./components/DeviceCard";
 import Login from "./components/Login";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      setIsAuthenticated(true);
+    if (token) setIsAuthenticated(true);
+
+    // Load saved theme from localStorage if exists
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
     }
   }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -25,33 +40,19 @@ export default function App() {
 
   return (
     <Layout>
-      <button
-        onClick={handleLogout}
-        className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded"
-      >
-        Logout
-      </button>
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white shadow rounded-xl p-4 text-center">
-          <h2 className="text-2xl font-bold">12</h2>
-          <p className="text-gray-500">Devices Online</p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-4 text-center">
-          <h2 className="text-2xl font-bold">3</h2>
-          <p className="text-gray-500">Offline</p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-4 text-center">
-          <h2 className="text-2xl font-bold">45</h2>
-          <p className="text-gray-500">Total Devices</p>
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+        <button onClick={toggleTheme}>
+          Switch to {theme === "light" ? "Dark" : "Light"} Mode
+        </button>
+        <button onClick={handleLogout}>Logout</button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2 bg-white shadow rounded-xl p-4">
+      <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+        <div style={{ flex: 2, background: "#fff", padding: "1rem", borderRadius: "8px" }}>
           <MapView />
         </div>
-        <div className="bg-white shadow rounded-xl p-4">
-          <DeviceList />
+        <div style={{ flex: 1, background: "#fff", padding: "1rem", borderRadius: "8px" }}>
+          <DeviceCard />
         </div>
       </div>
     </Layout>
