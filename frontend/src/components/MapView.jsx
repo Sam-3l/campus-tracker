@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import api from "../services/api";
 import "../App.css";
 import "leaflet/dist/leaflet.css";
 
-// Base device icon
+const primaryColor = "#4e54c8"; // theme color for markers, tooltip, ping
+
+// Device icon
 const deviceIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [35, 35],
@@ -13,66 +15,99 @@ const deviceIcon = new L.Icon({
   popupAnchor: [0, -35],
 });
 
-// Animated ping icon using divIcon
+// Ping divIcon
 const createPingIcon = () =>
   L.divIcon({
     className: "ping-icon",
-    iconSize: [50, 50],
-    iconAnchor: [25, 25],
+    iconSize: [60, 60],
+    iconAnchor: [30, 30], 
     html: `<div class="ping-circle"></div>`,
   });
 
+// Recenter map when location updates
+function Recenter({ lat, lng, zoom }) {
+  const map = useMap();
+  if (lat && lng) map.setView([lat, lng], zoom, { animate: true });
+  return null;
+}
+
 export default function MapView() {
   const [locations, setLocations] = useState([]);
+  const zoomLevel = 17; // closer zoom
 
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const res = await api.get("/api/devices/latest_location");
-        setLocations([res.data]);
+        if (res.data) {
+          const loc = {
+            ...res.data,
+            lat: parseFloat(res.data.lat),
+            lng: parseFloat(res.data.lng),
+          };
+          setLocations(prev => [...prev, loc]); // store history for trail
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
     fetchLocations();
-    const interval = setInterval(fetchLocations, 5000); // refresh every 5s
+    const interval = setInterval(fetchLocations, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  const device = locations[locations.length - 1]; // latest location
+
+  // Prepare polyline coordinates
+  const pathCoords = locations.map(loc => [loc.lat, loc.lng]);
+
   return (
     <MapContainer
-      center={[6.5244, 3.3792]}
-      zoom={15}
+      center={device ? [device.lat, device.lng] : [6.5244, 3.3792]}
+      zoom={zoomLevel}
       style={{ height: "100%", width: "100%" }}
       scrollWheelZoom={true}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-      {locations.map((loc, i) => (
-        <React.Fragment key={i}>
-          {/* Ping animation */}
-          <Marker position={[loc.lat, loc.lng]} icon={createPingIcon()} />
+      {device && (
+        <>
+          <Recenter lat={device.lat} lng={device.lng} zoom={zoomLevel} />
 
-          {/* Actual device icon */}
-          <Marker position={[loc.lat, loc.lng]} icon={deviceIcon}>
-            <Tooltip direction="top" offset={[0, -20]} opacity={0.9} permanent={false}>
-              <div style={{ textAlign: "center", fontSize: "0.85rem" }}>
-                <strong>{loc.name || "Device"}</strong>
+          {/* Ping animation behind the marker */}
+          <Marker position={[device.lat, device.lng]} icon={createPingIcon()} />
+
+          {/* Device marker */}
+          <Marker position={[device.lat, device.lng]} icon={deviceIcon}>
+            <Tooltip
+              direction="top"
+              offset={[0, -25]}
+              opacity={0.95}
+              permanent={false}
+              className="device-tooltip"
+            >
+              <div style={{ fontSize: "0.85rem", textAlign: "center" }}>
+                <strong>{device.name || "Device"}</strong>
                 <br />
-                {new Date(loc.timestamp).toLocaleString()}
+                {new Date(device.timestamp).toLocaleString()}
               </div>
             </Tooltip>
 
             <Popup>
               <div style={{ fontSize: "0.9rem" }}>
-                <strong>{loc.name || "Device"}</strong>
-                <div>{new Date(loc.timestamp).toLocaleString()}</div>
+                <strong>{device.name || "Device"}</strong>
+                <div>{new Date(device.timestamp).toLocaleString()}</div>
               </div>
             </Popup>
           </Marker>
-        </React.Fragment>
-      ))}
+
+          {/* Trail polyline */}
+          {pathCoords.length > 1 && (
+            <Polyline positions={pathCoords} color={primaryColor} weight={4} opacity={0.7} />
+          )}
+        </>
+      )}
     </MapContainer>
   );
 }

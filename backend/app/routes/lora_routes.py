@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from flask_socketio import emit
 from ..models import Location
 from ..extensions import db, socketio
 
@@ -53,15 +52,20 @@ def receive_data():
     if lat is None or lng is None:
         return jsonify({"error": "Invalid payload"}), 400
 
+    # Save to database
     location = Location(lat=lat, lng=lng)
     db.session.add(location)
     db.session.commit()
 
-    # Emit real-time location update
+    # Emit real-time location update to all connected clients
     socketio.emit(
         "location_update",
-        {"lat": lat, "lng": lng, "timestamp": location.timestamp.isoformat()},
-        broadcast=True,
+        {
+            "lat": lat,
+            "lng": lng,
+            "timestamp": location.timestamp.isoformat()
+        },
+        to=None
     )
 
     return jsonify({"status": "ok"}), 200
