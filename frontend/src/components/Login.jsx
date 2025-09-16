@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import api from "../services/api";
 import "./Login.css";
 
@@ -7,14 +7,33 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const visualRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  // Handle spotlight effect
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const rect = visualRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      visualRef.current.style.setProperty("--spot-x", `${x}px`);
+      visualRef.current.style.setProperty("--spot-y", `${y}px`);
+    };
+    const current = visualRef.current;
+    current.addEventListener("mousemove", handleMouseMove);
+    return () => current.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
+
     try {
       const response = await api.post("/api/auth/login", { username, password });
       const { token } = response.data;
@@ -22,17 +41,20 @@ export default function Login({ onLogin }) {
       onLogin();
     } catch (err) {
       setError("Invalid username or password");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-wrapper">
       {/* Left visual section */}
-      <div className="login-visual">
+      <div className="login-visual" ref={visualRef}>
+        <div className="overlay"></div>
         <div className="visual-content">
-          <img src="/images/tracker-placeholder.webp" alt="Illustration" />
-          <h1>Welcome Back!</h1>
-          <p>Log in to access your account and track your activities.</p>
+          <h1>Campus Wide Human & Asset Tracker</h1>
+          <h2>Welcome Back</h2>
+          <p>Login to access your account</p>
         </div>
       </div>
 
@@ -50,6 +72,7 @@ export default function Login({ onLogin }) {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               required
+              disabled={loading}
             />
           </div>
 
@@ -61,10 +84,19 @@ export default function Login({ onLogin }) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
+              disabled={loading}
             />
           </div>
 
-          <button type="submit" className="btn-submit">Login</button>
+          <button type="submit" className="btn-submit" disabled={loading}>
+            {loading ? (
+              <span className="loading-content">
+                <span className="spinner"></span> Logging in...
+              </span>
+            ) : (
+              "Login"
+            )}
+          </button>
         </form>
       </div>
     </div>

@@ -3,6 +3,7 @@ import Layout from "./components/Layout";
 import MapView from "./components/MapView";
 import DeviceCard from "./components/DeviceCard";
 import Login from "./components/Login";
+import "./App.css";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,7 +13,6 @@ export default function App() {
     const token = localStorage.getItem("authToken");
     if (token) setIsAuthenticated(true);
 
-    // Load saved theme from localStorage if exists
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       setTheme(savedTheme);
@@ -40,18 +40,20 @@ export default function App() {
 
   return (
     <Layout>
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+      {/* Header */}
+      <div className="app-header">
         <button onClick={toggleTheme}>
           Switch to {theme === "light" ? "Dark" : "Light"} Mode
         </button>
         <button onClick={handleLogout}>Logout</button>
       </div>
 
-      <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-        <div style={{ flex: 2, background: "#fff", padding: "1rem", borderRadius: "8px" }}>
+      {/* Main content */}
+      <div className="app-main">
+        <div className="map-container">
           <MapView />
         </div>
-        <div style={{ flex: 1, background: "#fff", padding: "1rem", borderRadius: "8px" }}>
+        <div className="device-container">
           <DeviceCard />
         </div>
       </div>
