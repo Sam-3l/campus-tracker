@@ -3,7 +3,7 @@ import random
 import time
 import math
 
-URL = "http://localhost:5000/api/lora/data"
+URL = "https://campus-tracker-mgaq.onrender.com/api/lora/data"
 
 # Starting point: OAU campus
 lat, lng = 7.519467, 4.520684
