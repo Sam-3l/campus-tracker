@@ -1,0 +1,59 @@
+.leaflet-tooltip {
+  background: rgba(78, 84, 200, 0.9);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.leaflet-popup-content {
+  font-size: 0.9rem;
+}
+
+.leaflet-marker-icon {
+  transition: transform 0.3s ease;
+}
+
+.leaflet-marker-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Ping animation container */
+.ping-icon {
+  background: transparent;
+  border-radius: 50%;
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+/* Animated pulsating circle */
+.ping-circle {
+  width: 15px;
+  height: 15px;
+  background: rgba(78, 84, 200, 0.8); /* primary color */
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ping 1.5s infinite;
+}
+
+/* Keyframes for ping */
+@keyframes ping {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./components/Layout";
 import MapView from "./components/MapView";
-import DeviceCard from "./components/DeviceCard";
 import Login from "./components/Login";
+import { FaMoon, FaSun } from "react-icons/fa"; // for theme toggle
 import "./App.css";
 
 export default function App() {
@@ -40,22 +40,19 @@ export default function App() {
 
   return (
     <Layout>
-      {/* Header */}
-      <div className="app-header">
-        <button onClick={toggleTheme}>
-          Switch to {theme === "light" ? "Dark" : "Light"} Mode
+      {/* Floating top-right actions */}
+      <div className="floating-actions">
+        <button className="theme-toggle" onClick={toggleTheme}>
+          {theme === "light" ? <FaMoon /> : <FaSun />}
         </button>
-        <button onClick={handleLogout}>Logout</button>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
 
-      {/* Main content */}
-      <div className="app-main">
-        <div className="map-container">
-          <MapView />
-        </div>
-        <div className="device-container">
-          <DeviceCard />
-        </div>
+      {/* Full-screen Map */}
+      <div className="map-container">
+        <MapView />
       </div>
     </Layout>
   );
