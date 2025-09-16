@@ -15,7 +15,7 @@ def create_app():
     socketio.init_app(app)
     from flask_cors import CORS
 
-    CORS(app, origins=[
+    CORS(app, supports_credentials=True, origins=[
         "http://localhost:5173",
         "https://campus-tracker-mgaq.onrender.com"
     ])
