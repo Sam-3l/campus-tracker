@@ -3,11 +3,12 @@ import jwt
 from datetime import datetime, timedelta
 from ..models import User
 from ..extensions import db
+from config import Config
 
 # Authentication Blueprint
 auth_bp = Blueprint("auth", __name__)
 
-SECRET_KEY = "supersecret-lol-will-change-this"
+SECRET_KEY = Config.SECRET_KEY
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
