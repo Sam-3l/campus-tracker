@@ -13,7 +13,7 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
     socketio.init_app(app)
-    CORS(app)
+    CORS(app, ["localhost:5173", "http://localhost:5173", "https://campus-tracker-mgaq.onrender.com"])
 
     swagger_config = {
         "headers": [],

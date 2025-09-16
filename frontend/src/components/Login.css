@@ -117,3 +117,24 @@
   .visual-content h2 { font-size:1.2rem; }
   .visual-content p { font-size:0.9rem; }
 }
+
+.api-docs-link {
+  display: inline-block;
+  margin-top: 1.2rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.25s ease-in-out;
+  backdrop-filter: blur(4px);
+}
+
+.api-docs-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-2px);
+}

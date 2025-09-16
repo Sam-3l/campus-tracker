@@ -55,6 +55,15 @@ export default function Login({ onLogin }) {
           <h1>Campus Wide Human & Asset Tracker</h1>
           <h2>Welcome Back</h2>
           <p>Login to access your account</p>
+
+          <a
+            href="https://campus-tracker-bakend.onrender.com/apidocs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="api-docs-link"
+          >
+            View API Docs
+          </a>
         </div>
       </div>
 
