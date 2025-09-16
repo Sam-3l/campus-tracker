@@ -43,8 +43,6 @@ def create_app():
         "basePath": "/",
     }
 
-    Swagger(app, config=swagger_config, template=swagger_template)
-
     # Register blueprints
     from .routes.lora_routes import lora_bp
     from .routes.device_routes import device_bp
@@ -52,5 +50,7 @@ def create_app():
     app.register_blueprint(lora_bp, url_prefix="/api/lora")
     app.register_blueprint(device_bp, url_prefix="/api/devices")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
+
+    Swagger(app, config=swagger_config, template=swagger_template)
 
     return app
