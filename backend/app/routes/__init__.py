@@ -9,6 +9,7 @@ from app.config import Config
 auth_bp = Blueprint("auth", __name__)
 
 SECRET_KEY = Config.SECRET_KEY
+TOKEN_EXPIRY_HOURS = Config.TOKEN_EXPIRY_HOURS
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -41,6 +42,9 @@ def login():
                   token:
                     type: string
                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI..."
+                  expires_in_hours:
+                    type: integer
+                    example: 24
         401:
           description: Invalid credentials
           content:
@@ -50,22 +54,51 @@ def login():
                 properties:
                   message:
                     type: string
-                    example: Invalid credentials
+                    example: Incorrect password
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Username and password are required
     """
     data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
+
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"message": "Username and password are required"}), 400
+
+    username = data.get("username", "").strip().lower()
+    password = data.get("password", "").strip()
 
     user = User.query.filter_by(username=username).first()
-    if user and user.check_password(password):
-        token = jwt.encode(
-            {"user_id": user.id, "exp": datetime.utcnow() + timedelta(hours=1)},
-            SECRET_KEY,
-            algorithm="HS256"
-        )
-        return jsonify({"token": token})
 
-    return jsonify({"message": "Invalid credentials"}), 401
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    if not user.check_password(password):
+        return jsonify({"message": "Incorrect password"}), 401
+
+    token = jwt.encode(
+        {"user_id": user.id, "exp": datetime.utcnow() + timedelta(hours=TOKEN_EXPIRY_HOURS)},
+        SECRET_KEY,
+        algorithm="HS256"
+    )
+
+    return jsonify({"token": token, "expires_in_hours": TOKEN_EXPIRY_HOURS}), 200
 
 
 @auth_bp.route("/register", methods=["POST"])
@@ -100,7 +133,7 @@ def register():
                     type: string
                     example: User registered successfully
         400:
-          description: User already exists
+          description: User already exists or bad request
           content:
             application/json:
               schema:
@@ -111,8 +144,15 @@ def register():
                     example: User already exists
     """
     data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
+
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"message": "Username and password are required"}), 400
+
+    username = data.get("username", "").strip().lower()
+    password = data.get("password", "").strip()
+
+    if not username or not password:
+        return jsonify({"message": "Username and password cannot be empty"}), 400
 
     if User.query.filter_by(username=username).first():
         return jsonify({"message": "User already exists"}), 400

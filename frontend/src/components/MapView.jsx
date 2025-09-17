@@ -45,6 +45,14 @@ export default function MapView() {
             lat: parseFloat(res.data.lat),
             lng: parseFloat(res.data.lng),
           };
+
+          // 🔹 Reverse Geocode (OpenStreetMap Nominatim)
+          const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${loc.lat}&lon=${loc.lng}&format=json`
+          );
+          const geoData = await geoRes.json();
+          loc.address = geoData.display_name || "Unknown location";
+
           setLocations(prev => [...prev, loc]); // store history for trail
         }
       } catch (err) {
@@ -91,13 +99,21 @@ export default function MapView() {
                 <strong>{device.name || "Device"}</strong>
                 <br />
                 {new Date(device.timestamp).toLocaleString()}
+                <br />
+                <span style={{ fontSize: "0.75rem", opacity: 0.9 }}>
+                  {device.address ? device.address.split(",")[0] : "Locating..."}
+                </span>
               </div>
             </Tooltip>
 
             <Popup>
-              <div style={{ fontSize: "0.9rem" }}>
+              <div style={{ fontSize: "0.9rem", lineHeight: "1.4" }}>
                 <strong>{device.name || "Device"}</strong>
                 <div>{new Date(device.timestamp).toLocaleString()}</div>
+                <hr />
+                <div>
+                  📍 <em>{device.address || "Fetching location..."}</em>
+                </div>
               </div>
             </Popup>
           </Marker>

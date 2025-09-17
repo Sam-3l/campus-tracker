@@ -1,9 +1,8 @@
 from flask import Flask
 from .config import Config
-from .extensions import db, socketio
+from .extensions import db, socketio, bcrypt
 from flask_migrate import Migrate
 from flasgger import Swagger
-from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +12,7 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
     socketio.init_app(app)
+    bcrypt.init_app(app)
     from flask_cors import CORS
 
     CORS(app, supports_credentials=True, origins=[
