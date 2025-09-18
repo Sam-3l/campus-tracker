@@ -24,6 +24,9 @@ def receive_data():
                 Lng:
                   type: number
                   example: 78.9012
+                Time:
+                  type: string
+                  format: date-time
       responses:
         200:
           description: Success
