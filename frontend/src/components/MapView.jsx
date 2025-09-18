@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import api from "../services/api";
-import "../App.css";
+import "./MapView.css";
 import "leaflet/dist/leaflet.css";
 
 const primaryColor = "#4e54c8"; // theme color for markers, tooltip, ping
