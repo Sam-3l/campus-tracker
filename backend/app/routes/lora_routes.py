@@ -47,13 +47,13 @@ def receive_data():
                     example: Invalid payload
     """
     payload = request.get_json()
-    lat, lng = payload.get("Lat"), payload.get("Lng")
+    lat, lng, timestamp = payload.get("Lat"), payload.get("Lng"), payload.get("Time")
 
     if lat is None or lng is None:
         return jsonify({"error": "Invalid payload"}), 400
 
     # Save to database
-    location = Location(lat=lat, lng=lng)
+    location = Location(lat=lat, lng=lng, timestamp=timestamp)
     db.session.add(location)
     db.session.commit()
 
@@ -63,7 +63,7 @@ def receive_data():
         {
             "lat": lat,
             "lng": lng,
-            "timestamp": location.timestamp.isoformat()
+            "timestamp": timestamp
         },
         to=None
     )
