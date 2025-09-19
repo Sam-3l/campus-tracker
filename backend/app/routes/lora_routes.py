@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from ..models import Location
 from ..extensions import db, socketio
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 lora_bp = Blueprint("lora", __name__)
 
@@ -50,10 +52,20 @@ def receive_data():
                     example: Invalid payload
     """
     payload = request.get_json()
-    lat, lng, timestamp = payload.get("Lat"), payload.get("Lng"), payload.get("Time")
+    lat, lng, timestamp_str = payload.get("Lat"), payload.get("Lng"), payload.get("Time")
 
     if lat is None or lng is None:
         return jsonify({"error": "Invalid payload"}), 400
+
+    # Parse timestamp (if provided), otherwise use current local time
+    try:
+        if timestamp_str:
+            # Expecting full format like "2025-09-19T02:56:42"
+            timestamp = datetime.fromisoformat(timestamp_str)
+        else:
+            timestamp = datetime.now(ZoneInfo("Africa/Lagos"))  # local Nigerian time
+    except Exception:
+        return jsonify({"error": "Invalid timestamp format"}), 400
 
     # Save to database
     location = Location(lat=lat, lng=lng, timestamp=timestamp)
@@ -66,7 +78,7 @@ def receive_data():
         {
             "lat": lat,
             "lng": lng,
-            "timestamp": timestamp
+            "timestamp": timestamp.isoformat()  # send back readable format
         },
         to=None
     )
