@@ -52,20 +52,13 @@ def receive_data():
                     example: Invalid payload
     """
     payload = request.get_json()
-    lat, lng, timestamp_str = payload.get("Lat"), payload.get("Lng"), payload.get("Time")
+    lat, lng = payload.get("Lat"), payload.get("Lng")
 
     if lat is None or lng is None:
         return jsonify({"error": "Invalid payload"}), 400
 
-    # Parse timestamp (if provided), otherwise use current local time
-    try:
-        if timestamp_str:
-            # Expecting full format like "2025-09-19T02:56:42"
-            timestamp = datetime.fromisoformat(timestamp_str)
-        else:
-            timestamp = datetime.now(ZoneInfo("Africa/Lagos"))  # local Nigerian time
-    except Exception:
-        return jsonify({"error": "Invalid timestamp format"}), 400
+    # Always use local Nigerian time
+    timestamp = datetime.now(ZoneInfo("Africa/Lagos"))
 
     # Save to database
     location = Location(lat=lat, lng=lng, timestamp=timestamp)
@@ -78,7 +71,7 @@ def receive_data():
         {
             "lat": lat,
             "lng": lng,
-            "timestamp": timestamp.isoformat()  # send back readable format
+            "timestamp": timestamp.isoformat()
         },
         to=None
     )
